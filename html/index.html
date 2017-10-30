@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Map</title>
+        <meta name="description" content="Map">
+
+        <style>
+            body {
+                background: sandybrown;
+                text-align: center;
+            }
+
+            .tile {
+                display: block;
+                float: left;
+                margin: 0px;
+                padding: 0px;
+                height: 16px;
+            }
+
+            .sprite {
+                position: absolute;
+            }
+
+            #map {
+                display: inline-block;
+            }
+
+            .clearall {
+                clear: both;
+            }
+        </style>
+
+        <script>
+            var tiles = {
+                r: "road",
+                rt: "road-t",
+                rl: "road-l",
+                rx: "road-tl",
+                dt: "road-t-dash",
+                dl: "road-l-dash",
+                g: "grass",
+                gt: "grass-t",
+                gl: "grass-l",
+                gx: "grass-tl"
+            };
+
+            var map = [
+                "g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rx, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  dl, r,  gl",
+                "g,  rl, r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  dl, r,  gl",
+
+                "g,  rl, r,  gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, r,  gl",
+                "g,  rl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  gl",
+
+                "g,  rl, r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  gl",
+                "g,  rl, r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  gl",
+                "g,  rl, r,  r,  r,  dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, r,  r,  r,  r,  gl",
+                "g,  rl, r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  gl",
+
+                "g,  rl, r,  dl, r,  gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, r,  r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, dl, gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, dl, gx, gt, rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  rl, r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  rt, rt, r,  r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, r,  r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, dl, gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, r,  r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  gx, gt, rl, dl, gx, gt, rl, dl, gx, gt, rl, dl, gx, gt, rl, dl, gx, gt, rl, dl, gx, gt, rl, dl, gx, gt, gt, gt, gt, gt, gt, gt, rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  rl, dl, gl, g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  gl, g,  rl, r,  rt, rt, r,  r,  rt, rt, r,  r,  rt, rt, r,  r,  rt, rt, r,  r,  rt, rt, r,  r,  rt, rt, rt, rt, rt, rt, gl, g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  rl, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, gl, g,  rl, r,  dl, r,  gl",
+
+                "g,  rl, r,  dl, r,  gl, g,  gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, g,  g,  rl, r,  dl, r,  gl",
+                "g,  rl, r,  dl, r,  gl, g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  g,  rl, r,  dl, r,  gl",
+
+                "rt, r,  r,  r,  r,  rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, rt, r,  r,  r,  r,  rt",
+                "r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r ",
+                "dt, r,  r,  r,  r,  dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, dt, r,  r,  r,  r,  dt",
+                "r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r,  r ",
+                "gt, rl, r,  dl, r,  gx, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, gt, rl, r,  dl, r,  gt",
+            ];
+        </script>
+
+    </head>
+    <body>
+
+        <div id="map"></div>
+        <div class="clearall"></div>
+
+        <script>
+
+            var x = 0;
+            var y = 0;
+            map.forEach(function (row) {
+                var div;
+
+                row.replace(/ /g, "").split(",").forEach(function (tileName) {
+                    var tile = document.createElement("div");
+                    tile.className = "tile";
+                    tile.id = "r" + y + "c" + x;
+
+                    var img = document.createElement("img");
+                    img.src = "tiles/" + tiles[tileName] + ".svg";
+                    tile.appendChild(img);
+
+                    document.getElementById("map").appendChild(tile);
+                    x = x + 1;
+                });
+
+                div = document.createElement("div");
+                div.className = "clearall";
+                document.getElementById("map").appendChild(div);
+                x = 0;
+                y = y + 1;
+            });
+
+            function drawCar(x, y, direction) {
+                var sprite = document.createElement("img");
+                sprite.src = "sprites/car-red.svg";
+                sprite.className = "sprite";
+
+                var tile = document.getElementById("r" + y + "c" + x);
+                tile.appendChild(sprite);
+            }
+
+            drawCar(22,28,"up");
+
+        </script>
+    </body>
+</html>
